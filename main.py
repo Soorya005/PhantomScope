@@ -2,9 +2,14 @@ from vm_controller.controller import VMController
 
 controller = VMController()
 
-print("=== PhantomScope VM Inventory ===")
+print("\n=== PhantomScope VM Inventory ===\n")
 
-for vm in controller.list_vms():
+vms = controller.list_vms()
+
+if not vms:
+    print("No virtual machines found.")
+
+for vm in vms:
     print(vm)
 
 controller.close()
