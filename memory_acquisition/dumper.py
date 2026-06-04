@@ -19,9 +19,18 @@ class MemoryDumper:
         ]
 
         try:
-            subprocess.run(command, check=True)
+            print(f"[+] Acquiring memory from {vm_name}")
+
+            subprocess.run(
+                command,
+                check=True
+            )
+
+            print(f"[+] Dump saved to {output_file}")
+
             return output_file
 
         except subprocess.CalledProcessError as e:
-            print(f"Dump failed: {e}")
+            print(f"[-] Dump failed: {e}")
+
             return None
