@@ -9,3 +9,4 @@ __pycache__/
 
 dumps/
 *.dump
+report.json
