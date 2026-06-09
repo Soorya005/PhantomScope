@@ -12,6 +12,7 @@ from cross_view.detector import CrossViewDetector
 from test_data.mock_processes import MEMORY_VIEW, OS_VIEW
 
 from alerts.alert_manager import AlertManager
+from analytics.statistics import Statistics
 
 
 DUMP_PATH = "dumps/debian-lab3.dump"
@@ -53,15 +54,6 @@ def main():
 
     parsed_data = VMCoreParser.parse(vmcore_output)
 
-    report = {
-        "vm_name": "debian-lab",
-        "dump_file": DUMP_PATH,
-        "analysis_time": datetime.now().isoformat(),
-        "forensic_data": parsed_data
-    }
-
-    report_file = ReportGenerator.generate(report)
-
     print("\nParsed Report:\n")
 
     print(
@@ -84,8 +76,6 @@ def main():
         f"{parsed_data.get('kernel_offset', 'Unknown')}"
     )
 
-    print(f"\nReport saved to: {report_file}")
-
     print("\n" + "=" * 50)
     print("=== Cross View Analysis ===")
     print("=" * 50)
@@ -100,6 +90,7 @@ def main():
         print("\nPotential Hidden Processes Detected:\n")
 
         for process in hidden_processes:
+
             print(
                 f"[!] PID={process.pid} "
                 f"NAME={process.name}"
@@ -133,6 +124,35 @@ def main():
 
     else:
         print("No alerts generated.")
+
+    statistics = Statistics.generate(
+        hidden_processes,
+        alerts
+    )
+
+    print("\n" + "=" * 50)
+    print("=== Analysis Statistics ===")
+    print("=" * 50)
+
+    for key, value in statistics.items():
+        print(f"{key}: {value}")
+
+    report = {
+        "vm_name": "debian-lab",
+        "dump_file": DUMP_PATH,
+        "analysis_time": datetime.now().isoformat(),
+        "forensic_data": parsed_data,
+        "alerts": alerts,
+        "statistics": statistics
+    }
+
+    report_file = ReportGenerator.generate(report)
+
+    print("\n" + "=" * 50)
+    print("=== Report Generation ===")
+    print("=" * 50)
+
+    print(f"\nReport saved to: {report_file}")
 
     print("\n" + "=" * 50)
     print("=== PhantomScope Analysis Complete ===")

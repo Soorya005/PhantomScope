@@ -1,0 +1,25 @@
+{
+    "vm_name": "debian-lab",
+    "dump_file": "dumps/debian-lab3.dump",
+    "analysis_time": "2026-06-09T18:20:54.284459",
+    "forensic_data": {
+        "kernel_version": "6.12.90+deb13.1-amd64",
+        "build_id": "f7e325aaeebc4d675e7afb44b48c9000d129f4da",
+        "page_size": "4096",
+        "kernel_offset": "0xc800000"
+    },
+    "alerts": [
+        {
+            "severity": "MEDIUM",
+            "type": "Hidden Process",
+            "pid": 200,
+            "process": "sleep"
+        },
+        {
+            "severity": "CRITICAL",
+            "type": "Hidden Process",
+            "pid": 300,
+            "process": "python"
+        }
+    ]
+}

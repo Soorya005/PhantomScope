@@ -1,12 +1,36 @@
 import json
+import os
+
+from datetime import datetime
 
 
 class ReportGenerator:
 
     @staticmethod
-    def generate(report_data):
+    def generate(report):
 
-        with open("report.json", "w") as f:
-            json.dump(report_data, f, indent=4)
+        os.makedirs(
+            "reports",
+            exist_ok=True
+        )
 
-        return "report.json"
+        timestamp = datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )
+
+        filename = (
+            f"reports/report_{timestamp}.json"
+        )
+
+        with open(
+            filename,
+            "w"
+        ) as file:
+
+            json.dump(
+                report,
+                file,
+                indent=4
+            )
+
+        return filename
