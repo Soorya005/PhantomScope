@@ -1,12 +1,15 @@
 class CrossViewDetector:
 
     @staticmethod
-    def compare(view_a, view_b):
+    def compare(memory_view, os_view):
+
+        os_pids = {process.pid for process in os_view}
 
         hidden = []
 
-        for item in view_a:
-            if item not in view_b:
-                hidden.append(item)
+        for process in memory_view:
+
+            if process.pid not in os_pids:
+                hidden.append(process)
 
         return hidden

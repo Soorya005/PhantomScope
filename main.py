@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from vm_controller.controller import VMController
 
 from artifact_extraction.banner import BannerExtractor
@@ -20,6 +22,7 @@ def main():
     print("\n=== PhantomScope VM Inventory ===\n")
 
     controller = VMController()
+
     vms = controller.list_vms()
 
     if not vms:
@@ -33,14 +36,16 @@ def main():
     print("=" * 50)
 
     banner_output = BannerExtractor.extract(DUMP_PATH)
-    print(banner_output)
+
+    print("\nKernel banner successfully extracted.")
 
     print("\n" + "=" * 50)
     print("=== VMCOREINFO Extraction ===")
     print("=" * 50)
 
     vmcore_output = VMCoreInfoExtractor.extract(DUMP_PATH)
-    print(vmcore_output)
+
+    print("\nVMCOREINFO successfully extracted.")
 
     print("\n" + "=" * 50)
     print("=== Parsing Forensic Artifacts ===")
@@ -51,13 +56,33 @@ def main():
     report = {
         "vm_name": "debian-lab",
         "dump_file": DUMP_PATH,
+        "analysis_time": datetime.now().isoformat(),
         "forensic_data": parsed_data
     }
 
     report_file = ReportGenerator.generate(report)
 
     print("\nParsed Report:\n")
-    print(report)
+
+    print(
+        f"Kernel Version : "
+        f"{parsed_data.get('kernel_version', 'Unknown')}"
+    )
+
+    print(
+        f"Build ID       : "
+        f"{parsed_data.get('build_id', 'Unknown')}"
+    )
+
+    print(
+        f"Page Size      : "
+        f"{parsed_data.get('page_size', 'Unknown')}"
+    )
+
+    print(
+        f"Kernel Offset  : "
+        f"{parsed_data.get('kernel_offset', 'Unknown')}"
+    )
 
     print(f"\nReport saved to: {report_file}")
 
@@ -75,7 +100,10 @@ def main():
         print("\nPotential Hidden Processes Detected:\n")
 
         for process in hidden_processes:
-            print(f"[!] {process}")
+            print(
+                f"[!] PID={process.pid} "
+                f"NAME={process.name}"
+            )
 
     else:
         print("\nNo hidden processes detected.")
@@ -87,8 +115,22 @@ def main():
     alerts = AlertManager.generate(hidden_processes)
 
     if alerts:
+
         for alert in alerts:
-            print(alert)
+
+            print(
+                f"\n[{alert['severity']}] "
+                f"{alert['type']}"
+            )
+
+            print(
+                f"PID     : {alert['pid']}"
+            )
+
+            print(
+                f"Process : {alert['process']}"
+            )
+
     else:
         print("No alerts generated.")
 
